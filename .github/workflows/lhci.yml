@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: write
+
 jobs:
   lhci:
     name: LightHouse
@@ -26,6 +29,35 @@ jobs:
       - name: Run LightHouse CI
         run: |
           npm install -g @lhci/cli@latest
-          lhci autorun
+          lhci autorun --upload.target=filesystem --upload.outputDir=./lhci-results
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Debug results folder
+        run: ls -l ./lhci-results
+
+      - name: Collect all Lighthouse scores
+        id: lhci-results
+        run: |
+          results=""
+          for f in ./lhci-results/*.report.json; do
+            page=$(basename "$f" -report.json)
+            perf=$(jq '.categories.performance.score * 100' "$f")
+            a11y=$(jq '.categories.accessibility.score * 100' "$f")
+            seo=$(jq '.categories.seo.score * 100' "$f")
+            bp=$(jq '.categories["best-practices"].score * 100' "$f")
+            results="$results\n**$page** → Performance: $perf | A11y: $a11y | SEO: $seo | Best Practices: $bp"
+          done
+          echo "results=$results" >> $GITHUB_OUTPUT
+
+      - name: Comment results on PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `📊 Lighthouse Results\n${{ steps.lhci-results.outputs.results }}`
+            });
