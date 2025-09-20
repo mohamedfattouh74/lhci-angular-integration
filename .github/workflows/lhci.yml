@@ -37,7 +37,7 @@ jobs:
         id: lhci-results
         run: |
           results=""
-          for f in ./lhci-results/*-report.json; do
+          for f in ./lhci-results/*.report.json; do
             page=$(basename "$f" -report.json)
             perf=$(jq '.categories.performance.score * 100' "$f")
             a11y=$(jq '.categories.accessibility.score * 100' "$f")
