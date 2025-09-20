@@ -6,6 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "build:lhci": "ng build --configuration=lhci",
+    "build:prod": "ng build --configuration=production",
+    "serve:locally": "npx serve -s dist/lhci-integration/browser",
     "test": "ng test"
   },
   "prettier": {
