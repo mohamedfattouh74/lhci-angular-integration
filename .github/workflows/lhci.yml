@@ -33,9 +33,6 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      - name: Debug results folder
-        run: ls -l ./lhci-results
-
       - name: Collect all Lighthouse scores
         id: lhci-results
         run: |
@@ -50,6 +47,12 @@ jobs:
           done
           echo "results=$results" >> $GITHUB_OUTPUT
 
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-reports
+          path: ./lhci-results/*.report.html
+
       - name: Comment results on PR
         uses: actions/github-script@v7
         with:
@@ -59,5 +62,6 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `📊 Lighthouse Results\n${{ steps.lhci-results.outputs.results }}`
+              body: `📊 Lighthouse Results\n${{ steps.lhci-results.outputs.results }}  
+              👉 Full reports available in the [Artifacts tab of this workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`  
             });
