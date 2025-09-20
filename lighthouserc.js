@@ -2,7 +2,7 @@
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npx serve ./www -s -l 5000',
+      startServerCommand: 'npx serve ./dist/lhci-integration/browser -s -l 5000',
       url: [
         'http://localhost:5000/login',
         'http://localhost:5000/home',
