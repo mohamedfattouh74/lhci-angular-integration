@@ -30,6 +30,9 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
+      - name: Debug results folder
+        run: ls -l ./lhci-results
+
       - name: Collect all Lighthouse scores
         id: lhci-results
         run: |
