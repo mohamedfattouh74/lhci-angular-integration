@@ -48,7 +48,7 @@ jobs:
           echo "results=$results" >> $GITHUB_OUTPUT
 
       - name: Upload Lighthouse reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports
           path: ./lhci-results/*.report.html
