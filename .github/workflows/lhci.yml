@@ -41,7 +41,7 @@ jobs:
         run: |
           results=""
           for f in ./lhci-results/*.report.json; do
-            page=$(basename "$f" -report.json)
+            page=$(basename "$f" .report.json | sed -E 's/^localhost-([a-zA-Z0-9]+)-.*/\1/')
             perf=$(jq '.categories.performance.score * 100' "$f")
             a11y=$(jq '.categories.accessibility.score * 100' "$f")
             seo=$(jq '.categories.seo.score * 100' "$f")
